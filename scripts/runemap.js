@@ -14,34 +14,33 @@ var svgLayoutObj = {
 			y: undefined
 		},
 		rewriteCoords: function(x, y, z) {
-			console.log(x,y,z);
-
 			if (x) {
 				if (this.prev.x === undefined)
-					this.prev.x = x;
-				/* this.x = this.prev.x + x * this.z; */
-				this.x = -this.prev.x + x;
+					this.prev.x = x + window.pageXOffset / this.z;
+				this.x = parseInt((this.prev.x - x) * this.z);
 			}
 
 			if (y) {
 				if (this.prev.y === undefined)
-					this.prev.y = y;
-				/* this.y = this.prev.y + y * this.z; */
-				this.y = -this.prev.y + y;
+					this.prev.y = y + window.pageYOffset / this.z;
+				this.y = parseInt((this.prev.y - y) * this.z);
 			}
 
 			if (z) {
 				this.z = this.z + z;
 
-				if (this.z > 5)
+				if (this.z >= 5)
 					this.z = 5;
-				else if (this.z < 1)
+				else if (this.z <= 1)
 					this.z = 1;
+
+				let de = document.documentElement;
+				/* console.log(de.clientWidth, de.clientHeight); */
+				document.body.style.transform = `matrix(${this.z}, 0, 0, ${this.z}, ${(de.clientWidth * this.z - de.clientWidth) / 2}, ${(de.clientHeight * this.z - de.clientHeight) / 2})`;
 			}
 
-			console.log(this.x);
-
-			svgLayoutObj.htmlEl.style.transform = `matrix(${this.z}, 0, 0, ${this.z}, ${this.x}, ${this.y})`;
+			/* console.log(this.x, this.y); */
+			window.scrollTo(this.x, this.y);
 		}
 	},
 	init: function() {
@@ -70,18 +69,22 @@ var svgLayoutObj = {
 			else
 				this.offsets.rewriteCoords(null, null, -0.2);
 		});
+		window.addEventListener('scroll', (e) => {
+			e.preventDefault();
+		});
 
-		this.offsets.rewriteCoords(0, 0, 1);
+		this.offsets.rewriteCoords(0, 0, 0);
 
-
+		/* runemap.addEventListener('click', (e)=> {
+			console.log('Coords:\n',e.clientX, e.clientY);
+			console.log('Runemap scrolled:\n',window.pageXOffset, window.pageYOffset);
+		}); */
 
 
 		function setCoords(e) {
 			if (svgLayoutObj.mouse.leftBtnHeld) {
-				/* console.log('setting new coords:');*/
-				console.log(e);
-
-				this.offsets.rewriteCoords(e.offsetX, e.offsetY, null);
+				/* console.log(e); */
+				this.offsets.rewriteCoords(e.clientX, e.clientY, null);
 			}
 		}
 	}
@@ -90,25 +93,47 @@ var svgLayoutObj = {
 runesObject = {
 	runes: [],
 	init: function() {
+		/*
+			let runeObj = {
+				id: '1',
+				selector: document.getElementById('item-1')
+			};
+			this.runes.push(runeObj);
+
+			runeObj = {
+				id: '10',
+				selector: document.getElementById('item-10')
+			};
+			this.runes.push(runeObj);
+
+			
+
+
+
+			console.log(this);
+
+
+
+
+			for (let i = 0; i < this.runes.length; i++) {
+				this.runes[i].selector.addEventListener('click', setRuneClickEvent);
+			}
+
+
+			function setRuneClickEvent() {
+				console.log(this);
+			}
+		*/
 		let runeObj = {
 			id: '1',
-			selector: document.getElementById('item-1')
+			selector: document.getElementById('rune-1')
 		};
 		this.runes.push(runeObj);
-
 		runeObj = {
 			id: '10',
-			selector: document.getElementById('item-10')
+			selector: document.getElementById('rune-10')
 		};
 		this.runes.push(runeObj);
-
-
-
-
-		console.log(this);
-
-
-
 
 		for (let i = 0; i < this.runes.length; i++) {
 			this.runes[i].selector.addEventListener('click', setRuneClickEvent);
