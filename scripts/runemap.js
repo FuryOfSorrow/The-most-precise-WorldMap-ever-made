@@ -26,7 +26,7 @@ var svgLayoutObj = {
 				this.y = parseInt((this.prev.y - y) * this.z);
 			}
 
-			if (z) {
+			if (z !== null) {
 				this.z = this.z + z;
 
 				if (this.z >= 5)
@@ -35,12 +35,17 @@ var svgLayoutObj = {
 					this.z = 1;
 
 				let de = document.documentElement;
-				/* console.log(de.clientWidth, de.clientHeight); */
-				document.body.style.transform = `matrix(${this.z}, 0, 0, ${this.z}, ${(de.clientWidth * this.z - de.clientWidth) / 2}, ${(de.clientHeight * this.z - de.clientHeight) / 2})`;
+				let xTrans = (de.clientWidth * this.z - de.clientWidth) / 2;
+				let yTrans = (de.clientHeight * this.z - de.clientHeight) / 2;
+
+				document.body.style.transform = `matrix(${this.z}, 0, 0, ${this.z}, ${xTrans}, ${yTrans})`;
 			}
 
-			/* console.log(this.x, this.y); */
 			window.scrollTo(this.x, this.y);
+			setTimeout(() => {
+				//console.log(window.pageXOffset, window.pageYOffset);
+				runemapModal.htmlEl.style.transform = `matrix(${1 / this.z}, 0, 0, ${1 / this.z}, ${window.pageXOffset / this.z}, ${window.pageYOffset / this.z})`;
+			}, 0);
 		}
 	},
 	init: function() {
@@ -72,13 +77,11 @@ var svgLayoutObj = {
 		window.addEventListener('scroll', (e) => {
 			e.preventDefault();
 		});
+		window.addEventListener('resize', (e) => {
+			this.offsets.rewriteCoords(0, 0, 0);
+		});
 
 		this.offsets.rewriteCoords(0, 0, 0);
-
-		/* runemap.addEventListener('click', (e)=> {
-			console.log('Coords:\n',e.clientX, e.clientY);
-			console.log('Runemap scrolled:\n',window.pageXOffset, window.pageYOffset);
-		}); */
 
 
 		function setCoords(e) {
@@ -90,58 +93,75 @@ var svgLayoutObj = {
 	}
 };
 
-runesObject = {
+var runesObject = {
 	runes: [],
 	init: function() {
-		/*
-			let runeObj = {
-				id: '1',
-				selector: document.getElementById('item-1')
-			};
-			this.runes.push(runeObj);
+		this.setRunemap();
 
-			runeObj = {
-				id: '10',
-				selector: document.getElementById('item-10')
-			};
-			this.runes.push(runeObj);
-
-			
-
-
-
-			console.log(this);
-
-
-
-
-			for (let i = 0; i < this.runes.length; i++) {
-				this.runes[i].selector.addEventListener('click', setRuneClickEvent);
-			}
-
-
-			function setRuneClickEvent() {
-				console.log(this);
-			}
-		*/
 		let runeObj = {
-			id: '1',
+			id: 1,
+			name: {
+				ru: 'Крестьянин',
+				en: 'Peasant'
+			},
+			rarity: 1,
 			selector: document.getElementById('rune-1')
 		};
 		this.runes.push(runeObj);
 		runeObj = {
-			id: '10',
+			id: 10,
+			name: {
+				ru: 'Гоблин',
+				en: 'Goblin'
+			},
+			rarity: 2,
 			selector: document.getElementById('rune-10')
 		};
 		this.runes.push(runeObj);
 
 		for (let i = 0; i < this.runes.length; i++) {
-			this.runes[i].selector.addEventListener('click', setRuneClickEvent);
+			this.runes[i].selector.addEventListener('click', () => {
+				runeClicked(this.runes[i]);
+			});
 		}
 
 
-		function setRuneClickEvent() {
+		function runeClicked(rune) {
+			//если руна открыта
 			console.log(this);
+			runemapModal.show();
+
+			setRuneNameBlock(rune.name[userData.lang]);
+
+
+			function setRuneNameBlock(val) {
+				runemapModal.htmlEl.querySelector('.leftpart .runename-block').innerHTML = val;
+			}
 		}
+	},
+	setRunemap: function() {
+		console.log('Runemap is set');
+	}
+};
+
+
+var runemapModal = {
+	active: false,
+	htmlEl: undefined,
+	init: function() {
+		this.htmlEl = document.getElementById('runemap-modal');
+		let closeBtn = document.getElementById('close-modal-btn');
+
+		closeBtn.addEventListener('click', () => {
+			this.hide();
+		});
+	},
+	show: function() {
+		this.active = true;
+		this.htmlEl.classList.add('active');
+	},
+	hide: function() {
+		this.active = false;
+		this.htmlEl.classList.remove('active');
 	}
 };

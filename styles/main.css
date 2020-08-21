@@ -9,6 +9,10 @@ body {
 	overflow: hidden;
 }
 
+div {
+	box-sizing: border-box;
+}
+
 #layout {
 	display: block;
 	position: absolute;
@@ -18,3 +22,78 @@ body {
 
 	cursor: pointer;
 }
+
+#runemap-modal {
+	display: none;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: center;
+
+	width: 100%;
+	height: 100%;
+
+	transform-origin: 0 0;
+	background-color: rgba(0, 0, 0, 0.95);
+}
+#runemap-modal.active {
+	display: flex;
+}
+
+/*
+leftpart
+*/
+	#runemap-modal>.leftpart {
+		display: flex;
+		position: relative;
+
+		flex-direction: column;
+		flex-wrap: nowrap;
+		align-items: center;
+		justify-content: flex-start;
+
+		width: 50%;
+		height: 100%;
+
+		background-color: rgba(255, 0, 0, 0.02);
+	}
+
+	#runemap-modal>.leftpart .runename-block {
+		display: flex;
+		position: relative;
+
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: center;
+		justify-content: center;
+
+		width: 100%;
+		height: 5rem;
+
+		font-size: 3.8rem;
+		color: rgba(255, 255, 255, 1);
+		background-color: rgba(255,255,255,0.02);
+	}
+/*
+leftpart
+*/
+	#runemap-modal>.rightpart {
+		display: flex;
+		position: relative;
+
+		flex-direction: column;
+		flex-wrap: nowrap;
+		align-items: center;
+		justify-content: flex-start;
+
+		width: 50%;
+		height: 100%;
+
+		background-color: rgba(0, 255, 0, 0.02);
+	}
