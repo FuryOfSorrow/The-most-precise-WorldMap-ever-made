@@ -1,0 +1,25 @@
+// main: ../styles.less
+
+#layout {
+	display: block;
+	position: absolute;
+	box-sizing: border-box;
+
+	width: 100%;
+
+	cursor: pointer;
+
+	& .city {
+		transition: @ease-in-out-transition;
+	
+		&.uninitialized {
+			fill: @broken-color;
+		}
+		&.normal {
+			fill: @normal-color;
+		}
+		&.normal:hover {
+			fill: @hovered-color;
+		}
+	}
+}
